@@ -19,10 +19,15 @@ namespace MyGame
             Pos.Y + Size.Height);
         }
 
+        public override void Ressurect()
+        {
+            Pos.X = Game.Width + Size.Width;
+        }
+
         public override void Update()
         {
             Pos.X = Pos.X + Dir.X;
-            if (Pos.X < 0) Pos.X = Game.Width + Size.Width;
+            if (Pos.X < 0) Ressurect();
         }
 
     }

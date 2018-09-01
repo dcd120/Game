@@ -7,12 +7,12 @@ namespace MyGame
     class Planet : BaseObject
     {
         protected Bitmap image;
-        protected Random rnd;
+        //protected Random rnd;
         
         public Planet(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
             image = new Bitmap("planet.bmp");
-            rnd = new Random();
+            //rnd = new Random();
         }
 
         public override void Draw()
@@ -22,6 +22,12 @@ namespace MyGame
 
         }
 
+        public override void Ressurect()
+        {
+            Pos.X = Game.Width + Size.Width;
+            Pos.Y = Game.rnd.Next(Size.Height, Game.Height - Size.Height);
+        }
+
         public override void Update()
         {
             // планета медленно движется влево
@@ -29,8 +35,7 @@ namespace MyGame
             if (Pos.X + Size.Width < 0)
             {
                 // достигая конца экрана, планета случайно перемещается по вертикали
-                Pos.X = Game.Width + Size.Width;
-                Pos.Y = rnd.Next(Size.Height,Game.Height - Size.Height);
+                Ressurect();
             }
         }
 

@@ -40,6 +40,13 @@ namespace MyGame
             
         }
 
+        public override void Ressurect()
+        {
+            Colour++;
+            if (Colour > 3) Colour = 0;
+            Pos.X = Game.Width + Size.Width;
+        }
+
         public override void Update()
         {
             // звезды будут двигаться справо на лево, 
@@ -50,9 +57,7 @@ namespace MyGame
             if (Pos.X < 0)
             {
                 // достигая конца экрана, зевезда меняет свой цвет
-                Colour++;
-                if (Colour > 3) Colour = 0;
-                Pos.X = Game.Width + Size.Width;
+                Ressurect();
 
             }
         }

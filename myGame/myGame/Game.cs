@@ -8,7 +8,10 @@ namespace MyGame
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
         private static BaseObject[] _objs;
-
+        private static Bullet _bullet;
+        private static Asteroid[] _asteroids;
+        private static Font myFont;
+        public static Random rnd;
 
         // Свойства
         // Ширина и высота игрового поля
@@ -20,6 +23,13 @@ namespace MyGame
 
         public static void Init(Form form)
         {
+            // выбрасываем исключение
+            if ((form.Width > 1000)||(form.Width < 0)||(form.Height > 1000)||(form.Height <0))
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+
             // Графическое устройство для вывода графики
             Graphics g;
             // Предоставляет доступ к главному буферу графического контекста для
@@ -33,7 +43,12 @@ namespace MyGame
             // Связываем буфер в памяти с графическим объектом, чтобы рисовать в
             // буфере
             Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
+
+            rnd = new Random();
+
             Load();
+
+            myFont= new Font(FontFamily.GenericMonospace, 10);
 
             Timer timer = new Timer { Interval = 100 };
             timer.Start();
@@ -46,8 +61,7 @@ namespace MyGame
             Draw();
             Update();
         }
-
-
+        
         public static void Draw()
         {
             // Проверяем вывод графики
@@ -61,9 +75,12 @@ namespace MyGame
             Buffer.Graphics.Clear(Color.Black);
             foreach (BaseObject obj in _objs)
                 obj.Draw();
+            foreach (BaseObject obj in _asteroids)
+                obj.Draw();
+            _bullet.Draw();
 
             // выведем надпись с инициалами
-            Game.Buffer.Graphics.DrawString("by Nikolay Zarivnoy (c) 2018", new Font(FontFamily.GenericMonospace, 10), Brushes.Aquamarine,300,100);
+            Game.Buffer.Graphics.DrawString("by Nikolay Zarivnoy (c) 2018", myFont, Brushes.Aquamarine,10,10);
 
             Buffer.Render();
 
@@ -73,13 +90,23 @@ namespace MyGame
         {
             foreach (BaseObject obj in _objs)
                 obj.Update();
+            foreach (Asteroid a in _asteroids)
+            {
+                a.Update();
+                if (a.Collision(_bullet))
+                {
+                    System.Media.SystemSounds.Hand.Play();
+                    // регенирируем объекты
+                    a.Ressurect();
+                    _bullet.Ressurect();
+                }
+            }
+            _bullet.Update();
         }
-
-
+        
         public static void Load()
         {
-            Random rnd = new Random();
-            _objs = new BaseObject[101];
+            _objs = new BaseObject[201];
 
             int size = 0;
             int base_speed = 5;
@@ -107,13 +134,28 @@ namespace MyGame
 
             for (int i = 0; i < _objs.Length - 1; i++)
             {
-                size = rnd.Next(1, 3);
+                size = rnd.Next(1, 2);
                 // звезды случайно заполнят пространство в правой 2/3 экрана и начнут течь на лево, имитируя полет вправо
-                _objs[i] = new zvezda(new Point(rnd.Next(50,790),rnd.Next(10,590)), new Point(rnd.Next(base_speed, base_speed+2),0), new Size(size,size), rnd.Next(0, 3));
+                _objs[i] = new zvezda(new Point(rnd.Next(10,Game.Width-10),rnd.Next(10,Game.Height-10)), new Point(rnd.Next(base_speed, base_speed+2),0), new Size(size,size), rnd.Next(0, 3));
             }
 
-            _objs[100] = new Planet(new Point(400,300), new Point(5,0), new Size(235,235));
+            _objs[200] = new Planet(new Point(400,300), new Point(5,0), new Size(235,235));
 
+            _bullet = new Bullet(new Point(0, 200), new Point(10, 0), new Size(30, 20));
+            _asteroids = new Asteroid[70];
+
+            //for (var i = 0; i < _objs.Length; i++)
+            //{
+            //    int r = rnd.Next(5, 50);
+            //    _objs[i] = new Star(new Point(1000, rnd.Next(0, Game.Height)), new
+            //    Point(-r, r), new Size(3, 3));
+            //}
+            for (var i = 0; i < _asteroids.Length; i++)
+            {
+                int r = rnd.Next(5, 50);
+                _asteroids[i] = new Asteroid(new Point(Game.Width + rnd.Next(0, Game.Width), rnd.Next(0, Game.Height)),
+                new Point(-r / 5, r), new Size(r, r));
+            }
 
         }
 
