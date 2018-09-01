@@ -3,10 +3,12 @@ using System.Drawing;
 
 namespace MyGame
 {
-    class Asteroid : BaseObject, ICloneable
+    class Asteroid : BaseObject, ICloneable, IComparable
     {
-        public int Power { get; set; }
+        public int Power { get; set; } = 3;
         protected Bitmap image;
+
+
 
         public Asteroid(Point pos, Point dir, Size size) : base(pos, dir, size)
         {
@@ -36,8 +38,7 @@ namespace MyGame
         public object Clone()
         {
             // Создаем копию нашего астероида
-            Asteroid asteroid = new Asteroid(new Point(Pos.X, Pos.Y), new
-            Point(Dir.X, Dir.Y), new Size(Size.Width, Size.Height));
+            Asteroid asteroid = new Asteroid(new Point(Pos.X, Pos.Y), new Point(Dir.X, Dir.Y), new Size(Size.Width, Size.Height));
             // Не забываем скопировать новому астероиду Power нашего астероида
             asteroid.Power = Power;
             return asteroid;
@@ -52,6 +53,28 @@ namespace MyGame
             Size.Width = nSize;
             Dir.X = -nSize / 5;
         }
+
+        int IComparable.CompareTo(object obj)
+        {
+            if (obj is Asteroid temp)
+            {
+                if (Power > temp.Power)
+                    return 1;
+                if (Power < temp.Power)
+                    return -1;
+                else
+                    return 0;
+            }
+            throw new ArgumentException("Parameter is not а Asteroid!");
+        }
+
+        public event MessageText Log;
+
+        public void Loggin(string msg)
+        {
+            Log?.Invoke(this.ToString() + msg);
+        }
+
     }
 
 }

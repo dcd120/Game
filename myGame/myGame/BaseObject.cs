@@ -16,6 +16,9 @@ namespace MyGame
             Size = size;
         }
 
+        public delegate void Message();
+        public delegate void MessageText(string msg);
+
         public bool Collision(ICollision o) => o.Rect.IntersectsWith(this.Rect);
         public Rectangle Rect => new Rectangle(Pos, Size);
 
