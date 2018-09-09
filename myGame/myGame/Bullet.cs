@@ -15,8 +15,8 @@ namespace MyGame
         public override void Draw()
         {
             Game.Buffer.Graphics.DrawImage(image, Pos.X, Pos.Y, Size.Width, Size.Height);
-            //Game.Buffer.Graphics.DrawRectangle(Pens.Green, Pos.X, Pos.Y, Size.Width, Size.Height);
-            //Game.Buffer.Graphics.DrawLine(Pens.OrangeRed, Pos.X - 5, Pos.Y + Size.Height / 2, Pos.X, Pos.Y + Size.Height / 2);
+            Game.Buffer.Graphics.DrawRectangle(Pens.Green, Pos.X, Pos.Y, Size.Width, Size.Height);
+            Game.Buffer.Graphics.DrawLine(Pens.OrangeRed, Pos.X - 5, Pos.Y + Size.Height / 2, Pos.X, Pos.Y + Size.Height / 2);
 
         }
 
@@ -31,7 +31,8 @@ namespace MyGame
             Pos.X = Pos.X + Dir.X;
             if (Pos.X > Game.Width)
             {
-                Ressurect();
+                //Ressurect();
+                //Pos.X
             }
         }
     }
